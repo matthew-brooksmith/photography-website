@@ -1,0 +1,21 @@
+/* ══════════════════════════════════════════════════════════════════════
+   SELF-HOSTED FONTS — not fetched yet.
+
+   This file is empty on purpose. Until you generate it, the site falls back
+   to Georgia and your system sans-serif, which looks perfectly decent — it
+   just isn't Fraunces and Inter.
+
+   To fill it in, run this once from the project folder:
+
+       python3 tools/fetch-fonts.py
+
+   That downloads the woff2 files into fonts/ and rewrites this file to point
+   at them. Commit both, and the site stops talking to Google entirely.
+
+   Why bother: loading fonts from fonts.googleapis.com sends every visitor's
+   IP address and user-agent to Google on every page view. A German court
+   (LG München I, 20 January 2022) found that doing so without consent
+   breaches GDPR. Self-hosting removes the request, and lets the Content
+   Security Policy in index.html stay locked to 'self' with no external
+   origins at all.
+   ══════════════════════════════════════════════════════════════════════ */

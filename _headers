@@ -1,0 +1,39 @@
+# Real HTTP response headers.
+#
+# GITHUB PAGES IGNORES THIS FILE. It's here so that the day you move to
+# Netlify, Cloudflare Pages or Vercel — all free, all take a custom domain —
+# the protections below switch on with no further work. Both Netlify and
+# Cloudflare Pages read this exact format.
+#
+# Everything here is something a <meta> tag cannot do. frame-ancestors in
+# particular is ignored by browsers when it appears in meta, which is why
+# clickjacking can't be prevented on Pages. See §6 of README.md.
+
+/*
+  # Nobody may embed this site in a frame — no clickjacking.
+  Content-Security-Policy: frame-ancestors 'none'
+  X-Frame-Options: DENY
+
+  # Don't let a browser guess a file is something other than what it's served as.
+  X-Content-Type-Options: nosniff
+
+  # Tell browsers to use HTTPS for this domain for the next two years, and to
+  # refuse to connect over plain HTTP even if a link says otherwise.
+  # Only turn this on once HTTPS is definitely working — it is hard to undo.
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+
+  # Switch off browser features this site has no use for, so a compromised
+  # page couldn't ask for them.
+  Permissions-Policy: accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), usb=(), interest-cohort=()
+
+  # No referrer information leaves this site, to anyone.
+  Referrer-Policy: no-referrer
+
+  # Isolate this page from any other browsing context.
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+
+/images/*
+  # Photos never change under the same filename, so let browsers keep them.
+  Cache-Control: public, max-age=31536000, immutable

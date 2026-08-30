@@ -1,0 +1,120 @@
+# Builds and publishes the site to GitHub Pages on every push to main.
+#
+# Three things happen here that matter for security and privacy:
+#   1. Only the files the site actually needs are published — the README,
+#      the tools folder and the git history stay out of the deployed tree.
+#   2. Every image has its metadata stripped. Photos straight from a camera
+#      or phone carry GPS coordinates, camera serial numbers and timestamps;
+#      publishing those tells the world where you live and shoot.
+#   3. The build fails if any GPS tag survives, so this can't quietly stop
+#      working one day.
+#
+# It also regenerates images/manifest.json, so adding a photo is just a
+# matter of dropping the file in and pushing.
+name: Deploy portfolio
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:      # lets you re-run it by hand from the Actions tab
+
+# Least privilege: this workflow can read the repo and publish Pages.
+# It cannot write to the repository, open issues, or touch anything else.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Don't leave a credential lying around in .git/config for the
+          # rest of the job. Nothing here needs to push.
+          persist-credentials: false
+
+      - name: Install exiftool
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libimage-exiftool-perl
+
+      - name: Assemble the published site
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          # An explicit allow-list. Anything not named here is never published.
+          cp index.html style.css fonts.css config.js app.js favicon.svg grain.svg _site/
+          [ -f _headers ] && cp _headers _site/ || true
+          [ -d fonts ] && cp -r fonts _site/ || true
+          cp -r images _site/images
+          # macOS folder metadata should never reach the web.
+          find _site -name '.DS_Store' -delete
+          find _site -name '._*' -delete
+
+      - name: Strip metadata from every image
+        run: |
+          set -euo pipefail
+          # -all= deletes every tag; the two -tagsfromfile @ copies put back the
+          # only two we actually need, both harmless:
+          #
+          #   icc_profile — the colour profile. Without it a Display-P3 or
+          #                 Adobe RGB photo gets read as sRGB and the colours
+          #                 shift visibly.
+          #   Orientation — the rotate flag. Without it a portrait photo
+          #                 straight from a camera displays on its side.
+          #
+          # This is a tag-level edit, not a re-encode: the pixels are untouched
+          # and there is no quality loss.
+          exiftool -all= -tagsfromfile @ -icc_profile -Orientation \
+                   -overwrite_original -r -q -q _site/images
+          echo "Metadata stripped (colour profile and orientation preserved)."
+
+      - name: Verify nothing identifying survived
+        run: |
+          set -euo pipefail
+          # -q -q silences the "N image files read" summary, so an empty result
+          # here really means no tags matched.
+          LEAKS=$(exiftool -q -q -m -s3 -r \
+                    -gps:all -serialnumber -bodyserialnumber -internalserialnumber \
+                    -lensserialnumber -ownername -artist -cameraid \
+                    _site/images 2>/dev/null | tr -d '[:space:]')
+          if [ -n "$LEAKS" ]; then
+            echo "::error::Identifying metadata is still present in a published image. Refusing to deploy."
+            exiftool -r -gps:all -serialnumber -ownername -artist _site/images
+            exit 1
+          fi
+          echo "No GPS coordinates, serial numbers or owner names in any image."
+
+      - name: Generate images/manifest.json
+        run: |
+          python3 - <<'PY'
+          import os, json, re
+          d = "_site/images"
+          files = sorted(
+              f for f in os.listdir(d)
+              if re.search(r"\.(jpe?g|png|webp|gif|avif)$", f, re.I)
+          )
+          with open(os.path.join(d, "manifest.json"), "w") as fh:
+              json.dump(files, fh, indent=0)
+          print(f"{len(files)} image(s) written to images/manifest.json")
+          PY
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,19 @@
+# macOS clutter — these get created automatically and shouldn't be published.
+# .DS_Store in particular leaks the names of every file in a folder, including
+# ones you never uploaded.
+.DS_Store
+._*
+
+# Editor cruft
+.vscode/
+.idea/
+*.swp
+
+# Build output from the deploy workflow, if you ever run it locally
+_site/
+
+# NOT ignored, deliberately:
+#   fonts/      — self-hosted font files must be committed and published
+#   config.js   — your settings; it's meant to be public
+__pycache__/
+*.pyc
