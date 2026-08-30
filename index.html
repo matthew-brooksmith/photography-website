@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Matt Brooks — Photography</title>
+<meta name="description" content="Selected photographs by Matt Brooks.">
+<meta name="theme-color" content="#faf6f0">
+
+<!-- ════════════════════ CONTENT SECURITY POLICY ════════════════════
+     An allow-list of what this page may load and where it may send data.
+     `default-src 'none'` starts from nothing and only opens what's needed —
+     and every directive that follows is 'self', so this page cannot load or
+     contact anything outside its own origin. There are no CDNs, no analytics,
+     no third-party fonts, and no inline script or style, which is why
+     'unsafe-inline' is absent: injected markup could not execute.
+
+     Note: `frame-ancestors` is deliberately not here — browsers ignore it in
+     a meta tag. It's set in `_headers` for hosts that support real headers.
+     See §6 of README.md for what GitHub Pages can't do. -->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'none';
+  script-src 'self';
+  style-src 'self';
+  img-src 'self';
+  font-src 'self';
+  connect-src 'self';
+  form-action 'none';
+  base-uri 'none';
+  object-src 'none';
+  frame-src 'none';
+  media-src 'none';
+  worker-src 'none';
+  manifest-src 'none';
+  upgrade-insecure-requests;">
+
+<!-- Don't tell anyone where visitors came from, not even the origin -->
+<meta name="referrer" content="no-referrer">
+
+<!-- Social share preview -->
+<meta property="og:title" content="Matt Brooks — Photography">
+<meta property="og:description" content="Selected photographs.">
+<meta property="og:type" content="website">
+
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="style.css">
+
+<script src="config.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+
+<body class="view-carousel">
+<div class="grain" id="grain"></div>
+
+<header class="header">
+  <div class="wordmark" id="wordmark"></div>
+  <nav class="nav-links" aria-label="Views">
+    <button class="view" data-view="random" aria-pressed="false">Random</button>
+    <span class="sep" aria-hidden="true">/</span>
+    <button class="view" data-view="grid" aria-pressed="false">Grid</button>
+    <span class="sep" aria-hidden="true">/</span>
+    <button id="aboutBtn" aria-haspopup="dialog">About</button>
+  </nav>
+</header>
+
+<div class="counter chrome" id="counter"></div>
+<div class="hint chrome">← → to move</div>
+
+<button class="nav prev" id="prev" aria-label="Previous photograph">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 4 7 12 15 20"/></svg>
+</button>
+<button class="nav next" id="next" aria-label="Next photograph">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 4 17 12 9 20"/></svg>
+</button>
+
+<div class="viewer-bg" id="viewerBg"></div>
+<button class="close-btn" id="viewerClose" aria-label="Back to grid">Close</button>
+
+<main class="stage" id="stage" aria-roledescription="carousel" aria-label="Photographs"></main>
+
+<section class="grid" id="grid" aria-label="All photographs, by date"></section>
+
+<!-- Shown when no photographs are found, instead of quietly falling back to
+     stock images. A broken manifest should look broken. -->
+<section class="empty" id="empty">
+  <h2>No photographs found</h2>
+  <p>Nothing in the <code>images/</code> folder is reaching the page.</p>
+  <p>If you're previewing locally, this file needs to be served over HTTP —
+     run <code>python3 -m http.server</code> and open <code>localhost:8000</code>
+     rather than opening the file directly.</p>
+  <p>If this is the live site, <code>images/manifest.json</code> is missing or
+     out of date. See README.md.</p>
+</section>
+
+<!-- About / contact -->
+<div class="about" id="about" role="dialog" aria-modal="true" aria-labelledby="aboutTitle" aria-hidden="true">
+  <button class="close-btn" id="aboutClose" aria-label="Close">Close</button>
+  <div class="about-inner">
+    <h2 id="aboutTitle"></h2>
+    <div id="aboutBody"></div>
+    <div class="about-links" id="aboutLinks"></div>
+  </div>
+</div>
+
+<!-- No inline style attribute here: `style-src 'self'` blocks those too. -->
+<noscript>
+  <p class="noscript-msg">This gallery needs JavaScript to display the photographs.</p>
+</noscript>
+</body>
+</html>

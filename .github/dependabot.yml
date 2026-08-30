@@ -1,0 +1,14 @@
+# Watches the actions used in .github/workflows/ and opens a pull request when
+# a new version is released. Without this, a pinned action quietly goes stale
+# and you miss security fixes.
+#
+# Monthly is plenty for a site that deploys a handful of static files.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "ci"

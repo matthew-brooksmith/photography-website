@@ -1,0 +1,351 @@
+/* ══════════════════════════════════════════════════════════════════════
+   PALETTE — the only two colours in the whole site.
+   Everything else is one of these at reduced opacity.
+   ══════════════════════════════════════════════════════════════════════ */
+:root{
+  --paper: #faf6f0;   /* warm off-white — the gallery wall */
+  --ink:   #082e57;   /* deep navy — type, rules, icons */
+
+  --rule:  rgba(8,46,87,.14);
+  --muted: rgba(8,46,87,.52);
+  --faint: rgba(8,46,87,.34);
+
+  --ease:  cubic-bezier(.76,0,.24,1);
+  --t-slide: .68s;
+  --t-fade:  .5s;
+
+  --pad: clamp(1.25rem, 3.2vw, 2.5rem);
+  --header-h: calc(var(--pad) * 2 + 1.4rem);
+
+  /* Restrained shadow — on a light ground a heavy drop shadow looks cheap.
+     This reads as a print lifted a few millimetres off the wall. */
+  --photo-shadow:
+      0 18px 40px -24px rgba(8,46,87,.30),
+      0 4px  12px -8px  rgba(8,46,87,.18);
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+html{ height:100%; }
+
+body{
+  min-height:100svh;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* Carousel is a single fixed screen; grid scrolls. */
+body.view-carousel{ height:100%; overflow:hidden; display:flex; }
+body.view-grid{ overflow-y:auto; }
+body.viewer-open{ overflow:hidden; }
+
+/* Barely-there paper texture over the ground. Set CONFIG.grain=false to remove.
+   Served as a file rather than a data: URI so img-src can stay 'self'. */
+.grain{
+  position:fixed; inset:0; z-index:0;
+  pointer-events:none; opacity:.035; mix-blend-mode:multiply;
+  background-image:url("grain.svg");
+  background-size:160px 160px;
+}
+
+/* ══════════════ HEADER ══════════════
+   Wordmark left, navigation right. Transparent over the carousel; in grid
+   view it gains a paper backing and a hairline so type never collides with
+   a photograph scrolling underneath it. */
+.header{
+  position:fixed; top:0; left:0; right:0; z-index:4;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:1rem; padding:var(--pad);
+  transition:background-color .3s ease, border-color .3s ease;
+  border-bottom:1px solid transparent;
+}
+body.view-grid .header{
+  background:var(--paper);
+  border-bottom-color:var(--rule);
+}
+body.viewer-open .header{ opacity:0; pointer-events:none; }
+
+.wordmark{
+  font-family:"Fraunces", Georgia, serif;
+  font-weight:400; font-size:1rem; letter-spacing:.11em;
+  color:var(--ink);
+}
+.wordmark:empty{ display:none; }
+
+.nav-links{
+  display:flex; align-items:center; gap:.6rem;
+  font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; font-weight:500;
+}
+.nav-links button{
+  border:0; background:none; cursor:pointer; padding:.2rem 0;
+  color:var(--faint); font:inherit; letter-spacing:inherit; text-transform:inherit;
+  position:relative; transition:color .3s ease;
+}
+.nav-links button:hover{ color:var(--muted); }
+.nav-links .view.is-on{ color:var(--ink); }
+.nav-links .view.is-on::after{
+  content:""; position:absolute; left:0; right:0; bottom:-.24rem;
+  height:1px; background:currentColor;
+}
+.nav-links .sep{ color:var(--rule); }
+#aboutBtn:hover{ color:var(--ink); }
+
+/* ══════════════ CAROUSEL STAGE ══════════════ */
+.stage{
+  position:relative; z-index:1;
+  width:min(88vw, 1120px);
+  height:min(76vh, 800px);
+  margin:auto; overflow:hidden;
+}
+body.view-grid .stage{ display:none; }
+
+/* In the viewer the same stage takes over the whole screen, laid over the grid.
+   Inset rather than padding: slides are absolutely positioned, and an absolute
+   box resolves inset:0 against the padding box — so padding here would do
+   nothing. The paper backdrop is a separate fixed layer behind it. */
+body.viewer-open .stage{
+  display:block;
+  position:fixed; z-index:6;
+  inset:calc(var(--pad) * 2.6) clamp(3rem, 8vw, 7rem) calc(var(--pad) * 3);
+  width:auto; height:auto;
+}
+.viewer-bg{
+  position:fixed; inset:0; z-index:5;
+  background:var(--paper);
+  display:none;
+}
+body.viewer-open .viewer-bg{ display:block; }
+
+.slide{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  opacity:0;
+  transition:transform var(--t-slide) var(--ease), opacity var(--t-fade) ease;
+  will-change:transform, opacity;
+}
+.slide.is-active { opacity:1; }
+.slide.is-leaving{ opacity:0; }
+
+.img-wrap{
+  flex:1 1 auto; min-height:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.slide img{
+  max-width:100%; max-height:100%;
+  object-fit:contain;
+  box-shadow:var(--photo-shadow);
+  transform:scale(1.025);
+  transition:transform 1s var(--ease);
+  user-select:none; -webkit-user-drag:none;
+}
+.slide.is-active img{ transform:scale(1); }
+
+/* ══════════════ CAPTION ══════════════ */
+.caption{
+  flex:0 0 auto; max-width:60ch;
+  margin:clamp(1.1rem, 2.6vh, 1.9rem) auto 0; padding:0 1rem;
+  text-align:center;
+  font-family:"Fraunces", Georgia, serif;
+  font-size:clamp(.92rem, .6rem + .55vw, 1.1rem);
+  font-weight:300; line-height:1.5; letter-spacing:.012em;
+  color:var(--muted);
+  opacity:0; transform:translateY(8px);
+  transition:opacity var(--t-fade) ease .05s, transform .6s var(--ease) .05s;
+}
+.slide.is-active .caption{ opacity:1; transform:none; }
+
+/* ══════════════ BOTTOM CHROME (carousel + viewer only) ══════════════ */
+.chrome{
+  position:fixed; z-index:7;
+  font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; font-weight:500;
+}
+body.view-grid:not(.viewer-open) .chrome{ display:none; }
+
+.counter{
+  bottom:var(--pad); right:var(--pad);
+  color:var(--faint);
+  font-variant-numeric:tabular-nums; letter-spacing:.14em;
+}
+.hint{
+  bottom:var(--pad); left:50%; transform:translateX(-50%);
+  color:var(--faint); font-size:.62rem; letter-spacing:.2em;
+}
+
+/* ══════════════ NAVIGATION ARROWS ══════════════ */
+.nav{
+  position:fixed; z-index:7; top:50%; transform:translateY(-50%);
+  width:clamp(44px,6vw,58px); height:clamp(44px,6vw,58px);
+  display:grid; place-items:center;
+  border:0; background:none; cursor:pointer;
+  color:var(--faint);
+  transition:color .3s ease, transform .35s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+body.view-grid:not(.viewer-open) .nav{ display:none; }
+.nav svg{ width:38%; height:38%; }
+.nav:hover{ color:var(--ink); }
+.nav.prev{ left:max(.25rem, calc(var(--pad) - 1rem)); }
+.nav.next{ right:max(.25rem, calc(var(--pad) - 1rem)); }
+.nav.prev:hover{ transform:translateY(-50%) translateX(-3px); }
+.nav.next:hover{ transform:translateY(-50%) translateX(3px); }
+
+/* ══════════════ GRID ══════════════ */
+.grid{
+  display:none;
+  position:relative; z-index:1;
+  max-width:1400px; margin:0 auto;
+  padding:calc(var(--header-h) + var(--pad)) var(--pad) calc(var(--pad) * 2);
+  grid-template-columns:repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+  gap:clamp(1.5rem, 3.2vw, 3rem);
+}
+body.view-grid .grid{ display:grid; }
+
+.tile{
+  border:0; background:none; padding:0; cursor:pointer;
+  display:flex; flex-direction:column; gap:.85rem;
+  font:inherit; color:inherit; text-align:left;
+}
+/* Square cell, image contained inside it — nothing is cropped, and every
+   photograph gets the same visual weight regardless of orientation. */
+.tile-frame{
+  aspect-ratio:1 / 1;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+}
+.tile img{
+  max-width:100%; max-height:100%;
+  object-fit:contain;
+  box-shadow:var(--photo-shadow);
+  transition:transform .5s var(--ease), opacity .5s ease;
+}
+.tile:hover img{ transform:scale(1.03); }
+.tile-cap{
+  font-family:"Fraunces", Georgia, serif;
+  font-weight:300; font-size:.85rem; line-height:1.45;
+  color:var(--muted);
+  transition:color .3s ease;
+}
+.tile:hover .tile-cap{ color:var(--ink); }
+
+/* Fills a square with the photograph instead, cropping to fit.
+   Turned on by CONFIG.gridCrop = true. */
+body.grid-crop .tile-frame{ display:block; }
+body.grid-crop .tile img{
+  width:100%; height:100%; max-width:none; max-height:none;
+  object-fit:cover;
+}
+
+/* ══════════════ EMPTY STATE ══════════════
+   Shown when no photographs are found. Replaces the old stock-photo demo:
+   a broken manifest now fails visibly instead of quietly looking fine. */
+.empty{
+  display:none;
+  margin:auto; z-index:1; position:relative;
+  max-width:44ch; padding:var(--pad); text-align:center;
+}
+body.is-empty .empty{ display:block; }
+body.is-empty .stage,
+body.is-empty .grid,
+body.is-empty .chrome,
+body.is-empty .nav{ display:none; }
+
+.empty h2{
+  font-family:"Fraunces", Georgia, serif;
+  font-weight:400; font-size:1.4rem; letter-spacing:.01em; margin-bottom:1rem;
+}
+.empty p{
+  font-family:"Fraunces", Georgia, serif;
+  font-weight:300; font-size:.98rem; line-height:1.7; color:var(--muted);
+  margin-bottom:.8rem;
+}
+.empty code{
+  font-family:ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size:.85em; color:var(--ink);
+}
+
+.noscript-msg{
+  position:fixed; inset:0; z-index:10;
+  display:flex; align-items:center; justify-content:center;
+  padding:2rem; text-align:center;
+  background:var(--paper); color:var(--muted);
+  font-family:"Fraunces", Georgia, serif; font-weight:300; font-size:1rem;
+}
+
+/* ══════════════ CLOSE (viewer + about) ══════════════ */
+.close-btn{
+  position:fixed; top:var(--pad); right:var(--pad); z-index:8;
+  border:0; background:none; cursor:pointer;
+  color:var(--faint); font-family:inherit;
+  font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; font-weight:500;
+  transition:color .3s ease;
+}
+.close-btn:hover{ color:var(--ink); }
+#viewerClose{ display:none; }
+body.viewer-open #viewerClose{ display:block; }
+
+/* One consistent focus ring, keyboard only */
+.nav-links button:focus-visible, .nav:focus-visible, .tile:focus-visible,
+.close-btn:focus-visible, .about a:focus-visible{
+  outline:1px solid var(--ink); outline-offset:5px; color:var(--ink);
+}
+
+/* ══════════════ ABOUT PANEL ══════════════ */
+.about{
+  position:fixed; inset:0; z-index:9;
+  background:var(--paper);
+  display:flex; align-items:center; justify-content:center;
+  padding:var(--pad);
+  opacity:0; visibility:hidden;
+  transition:opacity .45s ease, visibility .45s;
+}
+.about.is-open{ opacity:1; visibility:visible; }
+
+.about-inner{
+  max-width:46ch;
+  transform:translateY(10px);
+  transition:transform .55s var(--ease);
+}
+.about.is-open .about-inner{ transform:none; }
+
+.about h2{
+  font-family:"Fraunces", Georgia, serif;
+  font-weight:400; font-size:clamp(1.5rem, 3.4vw, 2rem);
+  letter-spacing:.01em; margin-bottom:1.4rem;
+}
+.about p{
+  font-family:"Fraunces", Georgia, serif;
+  font-weight:300; font-size:clamp(.98rem, .62rem + .5vw, 1.12rem);
+  line-height:1.75; color:var(--muted); margin-bottom:1.1rem;
+}
+.about-links{
+  margin-top:2rem; padding-top:1.4rem; border-top:1px solid var(--rule);
+  display:flex; flex-wrap:wrap; gap:1.6rem;
+  font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; font-weight:500;
+}
+.about-links a{
+  color:var(--ink); text-decoration:none;
+  border-bottom:1px solid var(--rule); padding-bottom:.2rem;
+  transition:border-color .3s ease;
+}
+.about-links a:hover{ border-bottom-color:var(--ink); }
+
+/* ══════════════ RESPONSIVE ══════════════ */
+@media (max-width:700px){
+  .stage{ width:90vw; height:72svh; }
+  .hint{ display:none; }
+  .nav{ color:var(--muted); }
+  .nav-links{ font-size:.62rem; gap:.5rem; }
+  .counter{ font-size:.62rem; }
+  .grid{ grid-template-columns:repeat(auto-fill, minmax(min(150px, 100%), 1fr)); gap:1.25rem; }
+  .tile-cap{ font-size:.75rem; }
+  body.viewer-open .stage{ inset:calc(var(--pad) * 2.6) .5rem calc(var(--pad) * 3); }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .slide, .slide img, .caption, .nav, .about, .about-inner, .tile img{
+    transition-duration:.001s !important;
+  }
+  .slide img, .slide.is-active img, .tile:hover img{ transform:none; }
+}
