@@ -27,7 +27,7 @@
   var ITEMS = [];          // normalised photos
   var ORDER = [];          // item-indices in the current order
   var POS   = 0;           // position within ORDER
-  var VIEW  = "random";    // "random" | "grid"
+  var VIEW  = "gallery";   // "gallery" | "grid"
   var VIEWER = false;      // full-screen photo open over the grid?
   var current = null, currentIdx = -1, animating = false, autoTimer = null;
   var lastTile = null;     // the tile that opened the viewer, to restore focus to
@@ -206,7 +206,7 @@
   function next() {
     if (ORDER.length < 2) return;
     POS++;
-    if (POS >= ORDER.length) { if (VIEW === "random" && !VIEWER) reshuffle(); POS = 0; }
+    if (POS >= ORDER.length) { if (VIEW === "gallery" && !VIEWER) reshuffle(); POS = 0; }
     updateCounter();
     transitionTo(ORDER[POS], { slide: true, dir: 1 });
   }
@@ -218,7 +218,9 @@
     transitionTo(ORDER[POS], { slide: true, dir: -1 });
   }
 
-  /* ── the grid ── */
+  /* ── the grid ──
+     Tiles carry no visible caption — the date is still read out via
+     aria-label for screen readers, it just isn't printed on the page. */
   function buildGrid() {
     gridEl.textContent = "";
     dateOrder().forEach(function (idx, i) {
@@ -238,12 +240,7 @@
       img.decoding = "async";
       frame.appendChild(img);
 
-      var cap = document.createElement("span");
-      cap.className = "tile-cap";
-      cap.textContent = it.captionText || "—";
-
       btn.appendChild(frame);
-      btn.appendChild(cap);
       btn.addEventListener("click", function () { openViewer(i, btn); });
       gridEl.appendChild(btn);
     });
@@ -273,14 +270,14 @@
   /* ── views ── */
   function setView(view, opts) {
     var force = opts && opts.force;
-    var v = view === "grid" ? "grid" : "random";
+    var v = view === "grid" ? "grid" : "gallery";
     if (v === VIEW && !force) return;
     VIEW = v;
 
     if (VIEWER) closeViewer();
 
     document.body.classList.toggle("view-grid", VIEW === "grid");
-    document.body.classList.toggle("view-carousel", VIEW === "random");
+    document.body.classList.toggle("view-carousel", VIEW === "gallery");
     viewBtns.forEach(function (b) {
       var on = b.dataset.view === VIEW;
       b.classList.toggle("is-on", on);
@@ -302,10 +299,10 @@
     }
   }
 
-  /* ── autoplay (Random view only) ── */
+  /* ── autoplay (Gallery view only) ── */
   function startAuto() {
     stopAuto();
-    if (CONFIG.autoMs > 0 && VIEW === "random" && !VIEWER && !isAboutOpen() && ORDER.length > 1) {
+    if (CONFIG.autoMs > 0 && VIEW === "gallery" && !VIEWER && !isAboutOpen() && ORDER.length > 1) {
       autoTimer = setInterval(next, CONFIG.autoMs);
     }
   }
@@ -420,13 +417,14 @@
   stage.addEventListener("mouseenter", stopAuto);
   stage.addEventListener("mouseleave", startAuto);
 
-  /* The view lives in the URL. "#date" is kept working so any link you'd
-     already shared from the previous version lands on the grid. */
+  /* The view lives in the URL. "#date" and "#random" are kept working so
+     any link already shared from an earlier version of the page still
+     lands in the right place. */
   function viewFromHash() {
     var h = location.hash.replace("#", "").toLowerCase();
     if (h === "grid" || h === "date") return "grid";
-    if (h === "random") return "random";
-    return CONFIG.startView === "grid" ? "grid" : "random";
+    if (h === "gallery" || h === "random") return "gallery";
+    return CONFIG.startView === "grid" ? "grid" : "gallery";
   }
   window.addEventListener("hashchange", function () { setView(viewFromHash()); });
 
