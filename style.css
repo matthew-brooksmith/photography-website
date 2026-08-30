@@ -31,7 +31,7 @@ body{
   min-height:100svh;
   background:var(--paper);
   color:var(--ink);
-  font-family:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family:"Anton", Impact, "Arial Narrow Bold", sans-serif;
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
 }
@@ -68,7 +68,7 @@ body.view-grid .header{
 body.viewer-open .header{ opacity:0; pointer-events:none; }
 
 .wordmark{
-  font-family:"Fraunces", Georgia, serif;
+  font-family:"Anton", Impact, "Arial Narrow Bold", sans-serif;
   font-weight:400; font-size:1rem; letter-spacing:.11em;
   color:var(--ink);
 }
@@ -95,8 +95,8 @@ body.viewer-open .header{ opacity:0; pointer-events:none; }
 /* ══════════════ CAROUSEL STAGE ══════════════ */
 .stage{
   position:relative; z-index:1;
-  width:min(88vw, 1120px);
-  height:min(76vh, 800px);
+  width:min(95vw, 1500px);
+  height:min(88vh, 1050px);
   margin:auto; overflow:hidden;
 }
 body.view-grid .stage{ display:none; }
@@ -147,7 +147,7 @@ body.viewer-open .viewer-bg{ display:block; }
   flex:0 0 auto; max-width:60ch;
   margin:clamp(1.1rem, 2.6vh, 1.9rem) auto 0; padding:0 1rem;
   text-align:center;
-  font-family:"Fraunces", Georgia, serif;
+  font-family:"Anton", Impact, "Arial Narrow Bold", sans-serif;
   font-size:clamp(.92rem, .6rem + .55vw, 1.1rem);
   font-weight:300; line-height:1.5; letter-spacing:.012em;
   color:var(--muted);
@@ -167,10 +167,6 @@ body.view-grid:not(.viewer-open) .chrome{ display:none; }
   bottom:var(--pad); right:var(--pad);
   color:var(--faint);
   font-variant-numeric:tabular-nums; letter-spacing:.14em;
-}
-.hint{
-  bottom:var(--pad); left:50%; transform:translateX(-50%);
-  color:var(--faint); font-size:.62rem; letter-spacing:.2em;
 }
 
 /* ══════════════ NAVIGATION ARROWS ══════════════ */
@@ -198,17 +194,16 @@ body.view-grid:not(.viewer-open) .nav{ display:none; }
   max-width:1400px; margin:0 auto;
   padding:calc(var(--header-h) + var(--pad)) var(--pad) calc(var(--pad) * 2);
   grid-template-columns:repeat(auto-fill, minmax(min(260px, 100%), 1fr));
-  gap:clamp(1.5rem, 3.2vw, 3rem);
+  gap:0;
 }
 body.view-grid .grid{ display:grid; }
 
+/* No caption, no gap — tiles sit edge-to-edge as one continuous mosaic. */
 .tile{
   border:0; background:none; padding:0; cursor:pointer;
-  display:flex; flex-direction:column; gap:.85rem;
+  display:block;
   font:inherit; color:inherit; text-align:left;
 }
-/* Square cell, image contained inside it — nothing is cropped, and every
-   photograph gets the same visual weight regardless of orientation. */
 .tile-frame{
   aspect-ratio:1 / 1;
   display:flex; align-items:center; justify-content:center;
@@ -217,17 +212,9 @@ body.view-grid .grid{ display:grid; }
 .tile img{
   max-width:100%; max-height:100%;
   object-fit:contain;
-  box-shadow:var(--photo-shadow);
   transition:transform .5s var(--ease), opacity .5s ease;
 }
 .tile:hover img{ transform:scale(1.03); }
-.tile-cap{
-  font-family:"Fraunces", Georgia, serif;
-  font-weight:300; font-size:.85rem; line-height:1.45;
-  color:var(--muted);
-  transition:color .3s ease;
-}
-.tile:hover .tile-cap{ color:var(--ink); }
 
 /* Fills a square with the photograph instead, cropping to fit.
    Turned on by CONFIG.gridCrop = true. */
@@ -252,11 +239,11 @@ body.is-empty .chrome,
 body.is-empty .nav{ display:none; }
 
 .empty h2{
-  font-family:"Fraunces", Georgia, serif;
+  font-family:"Anton", Impact, "Arial Narrow Bold", sans-serif;
   font-weight:400; font-size:1.4rem; letter-spacing:.01em; margin-bottom:1rem;
 }
 .empty p{
-  font-family:"Fraunces", Georgia, serif;
+  font-family:"Anton", Impact, "Arial Narrow Bold", sans-serif;
   font-weight:300; font-size:.98rem; line-height:1.7; color:var(--muted);
   margin-bottom:.8rem;
 }
@@ -270,7 +257,7 @@ body.is-empty .nav{ display:none; }
   display:flex; align-items:center; justify-content:center;
   padding:2rem; text-align:center;
   background:var(--paper); color:var(--muted);
-  font-family:"Fraunces", Georgia, serif; font-weight:300; font-size:1rem;
+  font-family:"Anton", Impact, "Arial Narrow Bold", sans-serif; font-weight:300; font-size:1rem;
 }
 
 /* ══════════════ CLOSE (viewer + about) ══════════════ */
@@ -310,12 +297,12 @@ body.viewer-open #viewerClose{ display:block; }
 .about.is-open .about-inner{ transform:none; }
 
 .about h2{
-  font-family:"Fraunces", Georgia, serif;
+  font-family:"Anton", Impact, "Arial Narrow Bold", sans-serif;
   font-weight:400; font-size:clamp(1.5rem, 3.4vw, 2rem);
   letter-spacing:.01em; margin-bottom:1.4rem;
 }
 .about p{
-  font-family:"Fraunces", Georgia, serif;
+  font-family:"Anton", Impact, "Arial Narrow Bold", sans-serif;
   font-weight:300; font-size:clamp(.98rem, .62rem + .5vw, 1.12rem);
   line-height:1.75; color:var(--muted); margin-bottom:1.1rem;
 }
@@ -333,13 +320,11 @@ body.viewer-open #viewerClose{ display:block; }
 
 /* ══════════════ RESPONSIVE ══════════════ */
 @media (max-width:700px){
-  .stage{ width:90vw; height:72svh; }
-  .hint{ display:none; }
+  .stage{ width:95vw; height:80svh; }
   .nav{ color:var(--muted); }
   .nav-links{ font-size:.62rem; gap:.5rem; }
   .counter{ font-size:.62rem; }
-  .grid{ grid-template-columns:repeat(auto-fill, minmax(min(150px, 100%), 1fr)); gap:1.25rem; }
-  .tile-cap{ font-size:.75rem; }
+  .grid{ grid-template-columns:repeat(auto-fill, minmax(min(150px, 100%), 1fr)); }
   body.viewer-open .stage{ inset:calc(var(--pad) * 2.6) .5rem calc(var(--pad) * 3); }
 }
 

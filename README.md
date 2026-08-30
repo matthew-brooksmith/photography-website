@@ -61,21 +61,22 @@ Ctrl-C in the terminal stops it.
 The toggle in the header switches between them, and the view lives in the URL,
 so you can link straight to either.
 
-**Random** (`/#random`) — one photograph at a time, shuffled, filling the screen.
+**Gallery** (`/#gallery`) — one photograph at a time, shuffled, filling the screen.
 Arrow keys, on-screen arrows, swipe on mobile, 20-second auto-advance. Hovering
 the photo pauses it. When the shuffle runs out it reshuffles, and never repeats
 the photo you were just looking at.
 
-**Grid** (`/#grid`) — every photograph as a thumbnail, oldest first. Click one and
-it opens full-screen; from there the arrows move through in date order and
-**Escape** (or *Close*) takes you back to where you were in the grid. Undated
-photos sort to the end.
+**Grid** (`/#grid`) — every photograph as an edge-to-edge tile, oldest first, no
+gap and no caption. Click one and it opens full-screen; from there the arrows
+move through in date order and **Escape** (or *Close*) takes you back to where
+you were in the grid. Undated photos sort to the end.
 
-Thumbnails sit whole inside square cells, so nothing is cropped and every photo
-carries the same visual weight regardless of orientation. If you'd rather they
-filled the squares edge-to-edge, set `gridCrop: true`.
+By default tiles are cropped to fill their square (`gridCrop: true`). Set it to
+`false` for the whole photo inside its square instead, letterboxed rather than
+cropped — still no gap, still no caption.
 
-Any old `/#date` link still works — it now lands on the grid.
+Any old `/#date` or `/#random` link still works — they land on the grid and
+gallery respectively.
 
 ### What changed in the design
 
@@ -83,9 +84,9 @@ Any old `/#date` link still works — it now lands on the grid.
 |---|---|
 | Background colour extracted from each photo, blooming as you moved between them | One fixed ground: `#faf6f0` warm off-white, `#082e57` deep navy for everything else |
 | Text colour flipped light/dark per photo to stay readable | Not needed any more — navy on off-white throughout |
-| Fraunces + IBM Plex Mono | Fraunces for the wordmark, captions and About; Inter for the small interface type |
-| Heavy drop shadow (built for a dark ground) | A much lighter one — on a pale ground a strong shadow looks cheap |
-| Chrome scattered into all four corners | A single header — wordmark left, `Random / Grid / About` right |
+| Fraunces + IBM Plex Mono | Anton, one weight, used throughout — wordmark, captions, About and the small interface type alike |
+| Heavy drop shadow (built for a dark ground) | A much lighter one on the single photograph view; none in the grid, whose tiles sit edge-to-edge |
+| Chrome scattered into all four corners | A single header — wordmark left, `Gallery / Grid / About` right |
 | `Random` / `By date` reordered the same carousel | Two genuinely different views |
 | No About section | About panel with your bio and contact links |
 
@@ -204,12 +205,12 @@ All in `config.js`:
 | What | Setting |
 |---|---|
 | Wordmark, top-left | `title` — set to `""` to hide it |
-| Which view a bare URL opens in | `startView: "random"` or `"grid"` |
+| Which view a bare URL opens in | `startView: "gallery"` or `"grid"` |
 | Your bio | `about.body` — one string per paragraph |
 | Contact links | `about.links` — add, remove or reorder freely |
-| Auto-advance speed (Random view) | `autoMs` — milliseconds; `0` turns it off |
+| Auto-advance speed (Gallery view) | `autoMs` — milliseconds; `0` turns it off |
 | Grid order, oldest vs newest first | `dateOrder: "asc"` or `"desc"` |
-| Crop thumbnails to fill their square | `gridCrop: true` / `false` |
+| Crop grid tiles to fill their square, vs. letterboxed | `gridCrop: true` / `false` |
 | Paper texture | `grain: true` / `false` |
 | A caption for one specific file | `meta`, e.g. `"2025-13-12.jpg": { caption:"Blue hour, Anglesey" }` |
 
@@ -348,7 +349,8 @@ with no further work.
 
 ## 7. Fonts
 
-The site uses Fraunces and Inter. It does **not** load them from Google.
+The site uses one font, Anton, everywhere — wordmark, captions, About panel and
+the small interface type alike. It does **not** load it from Google.
 
 Loading a font from `fonts.googleapis.com` sends every visitor's IP address and
 user-agent to Google on every page view, without their knowledge. A German court
@@ -362,9 +364,9 @@ So the fonts are self-hosted. To fetch them, run this once:
 python3 tools/fetch-fonts.py
 ```
 
-It downloads the `.woff2` files into `fonts/` and rewrites `fonts.css` to point at
-them. Commit both. **Until you run it, the site falls back to Georgia and your
-system sans-serif** — which looks perfectly decent, just not the same.
+It downloads the `.woff2` file into `fonts/` and rewrites `fonts.css` to point at
+it. Commit both. **Until you run it, the site falls back to Impact / Arial
+Narrow Bold** — a reasonable stand-in, just not the same.
 
 ---
 

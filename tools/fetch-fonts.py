@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Download Fraunces and Inter from Google Fonts into ./fonts/ and rewrite
-./fonts.css to point at the local copies.
+Download Anton from Google Fonts into ./fonts/ and rewrite ./fonts.css to
+point at the local copy.
 
 Run once, from the project folder:
 
@@ -23,8 +23,8 @@ import sys
 import urllib.request
 import urllib.error
 
-# The families and weights style.css actually asks for.
-FAMILIES = "family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Inter:wght@400;500"
+# The family style.css actually asks for. Anton ships one weight only.
+FAMILIES = "family=Anton"
 CSS_URL = f"https://fonts.googleapis.com/css2?{FAMILIES}&display=swap"
 
 # Google serves different formats depending on the browser. Asking as a recent

@@ -2,11 +2,13 @@
    CONFIG — this is the file you edit. Nothing else needs touching.
    ──────────────────────────────────────────────────────────────────────
    TWO VIEWS
-   • Random — one photograph at a time, shuffled, auto-advancing.
-   • Grid   — every photograph as a thumbnail, ordered by date. Clicking one
-              opens it full-screen, where the arrows move through in date
-              order and Escape takes you back.
-   The view lives in the URL: /#random and /#grid, so either can be linked.
+   • Gallery — one photograph at a time, shuffled, auto-advancing.
+   • Grid    — every photograph as an edge-to-edge thumbnail, ordered by
+               date (no caption shown on the tile itself). Clicking one
+               opens it full-screen, where the arrows move through in date
+               order and Escape takes you back.
+   The view lives in the URL: /#gallery and /#grid, so either can be linked.
+   (/#random still works too, for any link shared from an earlier version.)
 
    ADDING PHOTOS
    • Drop them in the folder below.
@@ -28,19 +30,22 @@ const CONFIG = {
   title:     "Matt Brooks",   // wordmark, top-left. "" to hide.
   folder:    "images/",       // where your photos live
 
-  startView: "random",        // which view a bare URL opens in: "random" or "grid"
-  autoMs:    20000,           // Random view: auto-advance after 20s (0 turns it off)
+  startView: "gallery",       // which view a bare URL opens in: "gallery" or "grid"
+  autoMs:    20000,           // Gallery view: auto-advance after 20s (0 turns it off)
   dateOrder: "asc",           // Grid order: "asc" = oldest→newest, "desc" = newest→oldest
-  gridCrop:  false,           // false = whole photo inside a square cell (no crop)
-                              // true  = photo fills the square, cropped to fit
+  gridCrop:  true,            // Grid tiles sit edge-to-edge with no gap or caption
+                              // either way. true  = photo fills its square, cropped
+                              //                      to fit (a tight mosaic)
+                              //             false = whole photo inside its square,
+                              //                      letterboxed, not cropped
   grain:     true,            // faint paper texture over the background
 
   about: {
     heading: "About",
     // One paragraph per string. Rewrite these in your own words.
     body: [
-      "I photograph quiet places — coastline, weather, the hour either side of dawn. Most of this is made close to home, on foot, usually alone.",
-      "Prints of anything here are available. If you'd like one, or you're after work for a commission, get in touch."
+      "I am a student who has taken great inspiration from their grandfather to shoot on film.",
+      "I dislike social media, so I am using this website as a personal archive and a point of contact for those who are interested in my style and may wish to work on a project together."
     ],
     // Only http(s) and mailto links are accepted; anything else is dropped.
     links: [
