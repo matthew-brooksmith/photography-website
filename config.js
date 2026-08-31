@@ -44,8 +44,9 @@ const CONFIG = {
     heading: "About",
     // One paragraph per string. Rewrite these in your own words.
     body: [
-      "I am a student who has taken great inspiration from their grandfather to shoot on film.",
-      "I dislike social media, so I am using this website as a personal archive and a point of contact for those who are interested in my style and may wish to work on a project together."
+      "I am a student who has taken great inspiration from his grandfather to shoot on film.",
+      "I dislike social media, so I am using this website as a personal archive and a point of", 
+      "contact for those who are interested in my photographic style and may wish to work on a project together."
     ],
     // Only http(s) and mailto links are accepted; anything else is dropped.
     links: [
