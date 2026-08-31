@@ -49,7 +49,7 @@ const CONFIG = {
     ],
     // Only http(s) and mailto links are accepted; anything else is dropped.
     links: [
-      { label: "Email", href: "mailto:mmattssmith@outlook.com" }
+      { label: "Email", href: "mailto:mattbrooksphotography@outlook.com" }
       // Add or remove freely. Delete a line you don't want.
     ]
   },
