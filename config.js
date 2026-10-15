@@ -27,7 +27,7 @@
    markup, so nothing you type can turn into code on the page.
    ══════════════════════════════════════════════════════════════════════ */
 const CONFIG = {
-  title:     "Matt Brooks",   // wordmark, top-left. "" to hide.
+  title:     "Matt Brooksmith", // wordmark, top-left. "" to hide.
   folder:    "images/",       // where your photos live
 
   startView: "gallery",       // which view a bare URL opens in: "gallery" or "grid"
