@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Matt Brooks — Photography</title>
-<meta name="description" content="Archive">
+<meta name="description" content="Personal photography archive">
 <meta name="theme-color" content="#faf6f0">
 
 <!-- ════════════════════ CONTENT SECURITY POLICY ════════════════════
@@ -39,7 +39,7 @@
 
 <!-- Social share preview -->
 <meta property="og:title" content="Matt Brooks — Photography">
-<meta property="og:description" content="Archive">
+<meta property="og:description" content="Personal photography archive">
 <meta property="og:type" content="website">
 
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -81,16 +81,10 @@
 <section class="grid" id="grid" aria-label="All photographs, by date"></section>
 
 <!-- Shown when no photographs are found, instead of quietly falling back to
-     stock images. A broken manifest should look broken. -->
-<section class="empty" id="empty">
-  <h2>No photographs found</h2>
-  <p>Nothing in the <code>images/</code> folder is reaching the page.</p>
-  <p>If you're previewing locally, this file needs to be served over HTTP —
-     run <code>python3 -m http.server</code> and open <code>localhost:8000</code>
-     rather than opening the file directly.</p>
-  <p>If this is the live site, <code>images/manifest.json</code> is missing or
-     out of date. See README.md.</p>
-</section>
+     stock images. A broken manifest should look broken. The message itself is
+     written in by app.js only when it's needed, so search engines never pick
+     up the troubleshooting text as the page's description. -->
+<section class="empty" id="empty"></section>
 
 <!-- About / contact -->
 <div class="about" id="about" role="dialog" aria-modal="true" aria-labelledby="aboutTitle" aria-hidden="true">

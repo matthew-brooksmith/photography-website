@@ -23,6 +23,7 @@
   var aboutBtn    = document.getElementById("aboutBtn");
   var aboutClose  = document.getElementById("aboutClose");
   var viewerClose = document.getElementById("viewerClose");
+  var emptyEl     = document.getElementById("empty");
 
   var ITEMS = [];          // normalised photos
   var ORDER = [];          // item-indices in the current order
@@ -428,6 +429,39 @@
   }
   window.addEventListener("hashchange", function () { setView(viewFromHash()); });
 
+  /* ── empty state ──
+     Built here rather than written into index.html, so the troubleshooting
+     text only exists on the page when something has actually gone wrong.
+     Left in the HTML, Google was showing it as the site's description. */
+  function buildEmpty() {
+    function para(parts) {
+      var p = document.createElement("p");
+      parts.forEach(function (part) {
+        if (typeof part === "string") {
+          p.appendChild(document.createTextNode(part));
+        } else {
+          var c = document.createElement("code");
+          c.textContent = part.code;
+          p.appendChild(c);
+        }
+      });
+      return p;
+    }
+    var h = document.createElement("h2");
+    h.textContent = "No photographs found";
+    emptyEl.appendChild(h);
+    emptyEl.appendChild(para(["Nothing in the ", { code: "images/" }, " folder is reaching the page."]));
+    emptyEl.appendChild(para([
+      "If you're previewing locally, this file needs to be served over HTTP \u2014 run ",
+      { code: "python3 -m http.server" }, " and open ", { code: "localhost:8000" },
+      " rather than opening the file directly."
+    ]));
+    emptyEl.appendChild(para([
+      "If this is the live site, ", { code: "images/manifest.json" },
+      " is missing or out of date. See README.md."
+    ]));
+  }
+
   /* ── init ── */
   if (CONFIG.title) wordmarkEl.textContent = CONFIG.title;
   if (!CONFIG.grain) grainEl.style.display = "none";
@@ -438,6 +472,7 @@
     if (!files || !files.length) {
       // Fail loudly. A silent stock-photo fallback would let a broken
       // manifest look like a working site.
+      buildEmpty();
       document.body.classList.add("is-empty");
       return;
     }
